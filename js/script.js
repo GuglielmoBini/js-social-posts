@@ -29,7 +29,7 @@ Se clicchiamo sul tasto "Mi Piace" cambiamo il colore al testo del bottone e inc
 
 //------------------------------------------------------------
 
-// prendo l'elemeno dal DOM
+// prendo l'elemento dal DOM
 
 const postContainer = document.getElementById("container");
 
@@ -85,7 +85,7 @@ const postsList = [
 
 // creo funzione per creare un post
 
-const createPost = (name, namePic, date, text, postPic, like) => {
+const createPost = (id, name, namePic, date, text, postPic, like) => {
   const post = `
     <div class="post">
     <div class="post__header">
@@ -124,7 +124,7 @@ const createPost = (name, namePic, date, text, postPic, like) => {
         </div>
         <div class="likes__counter">
           Piace a
-          <b id="like-counter-1" class="js-likes-counter">${like}</b> persone
+          <b id="like-counter-${id}" class="js-likes-counter">${like}</b> persone
         </div>
       </div>
     </div>
@@ -136,14 +136,28 @@ const createPost = (name, namePic, date, text, postPic, like) => {
 let posts = "";
 
 postsList.forEach((post) => {
-  posts += createPost(
-    post.name,
-    post.namePic,
-    post.date,
-    post.text,
-    post.postPic,
-    post.like
-  );
+  const { id, name, namePic, date, text, postPic, like } = post;
+  posts += createPost(id, name, namePic, date, text, postPic, like);
 });
 
 postContainer.innerHTML = posts;
+
+// prendo i bottoni dal DOM
+const likeButtons = document.querySelectorAll(".like-button");
+
+for (let i = 0; i < likeButtons.length; i++) {
+  // aggancio event listener ai bottoni
+  likeButtons[i].addEventListener("click", () => {
+    likeButtons[i].classList.toggle("like-button--liked");
+    // incremento e decremento i likes
+    if (likeButtons[i].classList.contains("like-button--liked")) {
+      postsList[i].like++;
+    } else {
+      postsList[i].like--;
+    }
+
+    //aggiorno il numero di likes
+    const likeNumber = document.getElementById(`like-counter-${i + 1}`);
+    likeNumber.innerText = postsList[i].like;
+  });
+}
